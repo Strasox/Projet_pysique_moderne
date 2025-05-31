@@ -75,7 +75,7 @@ plt.xlabel("x")
 plt.ylabel("Densité de probabilité de présence")
 plt.legend() #Permet de faire apparaitre la legende
 
-ani = animation.FuncAnimation(fig,animate,init_func=init, frames=nd, blit=False, interval=100, repeat=False)
+ani = animation.FuncAnimation(fig,animate,init_func=init, frames=nd, blit=False, interval=100, repeat=True)
 
 file_name = 'paquet_onde_e='+str(e)+'.mp4'
 ani.save(file_name, writer = animation.FFMpegWriter(fps=30, bitrate=5000))
