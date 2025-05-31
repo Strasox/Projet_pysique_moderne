@@ -67,7 +67,7 @@ plot_title = "Marche Ascendante avec E/Vo="+str(e)
 
 fig = plt.figure() # initialise la figure principale
 line, = plt.plot([], [])
-plt.ylim(-10,13)
+plt.ylim(-2,13)
 plt.xlim(0,2)
 plt.plot(o,V,label="Potentiel")
 plt.title(plot_title)
