@@ -20,7 +20,7 @@ V = np.zeros(nx)
 V[(o >= a) & (o <= b)] = v0
 
 # Liste des rapports E/|V0|
-e_values = np.linspace(3, 6, 31)
+e_values = np.linspace(0.1, 10, 100)
 T_values = []
 
 for e in e_values:
@@ -54,11 +54,11 @@ for e in e_values:
 
     print(f"E/|V0| = {e:.2f}, T = {T:.4f}")
 
+# Tracé du coefficient de transmission
 plt.plot(e_values, T_values)
 plt.title("Effet Ramsauer-Townsend : Transmission en fonction de E/|V₀|")
 plt.xlabel("E / |V₀|")
 plt.ylabel("Coefficient de transmission T")
 plt.grid(True)
-plt.ylim(0.6, 1.05)
-plt.xlim(3,6)
+plt.ylim(0, 1.05)
 plt.show()
