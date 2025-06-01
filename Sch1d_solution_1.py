@@ -25,8 +25,9 @@ xc=0.6
 sigma=0.05
 A=1/(math.sqrt(sigma*math.sqrt(math.pi)))
 v0=-4000
-e=2#Valeur du rapport E/V0
-E=e*v0
+E=2
+e=-E/v0#Valeur du rapport E/V0
+
 k=math.sqrt(2*abs(E))
 
 o=np.zeros(nx)
@@ -63,6 +64,20 @@ for i in range(1,nt):
         it+=1
         final_densite[it][:]=densite[i][:]
 
+# Choix de la dernière densité (quand le paquet a fini d'interagir)
+dens_finale = densite[-1, :]
+
+# Masques pour les zones de réflexion et de transmission
+zone_transmise = o > 0.91
+zone_totale = np.ones_like(o, dtype=bool)  # toute la grille
+
+# Intégrales (sommation discrète)
+proba_transmise = np.sum(dens_finale[zone_transmise]) * dx
+proba_totale = np.sum(dens_finale[zone_totale]) * dx
+
+# Coefficient de transmission
+T = proba_transmise / proba_totale
+
 plot_title = "Marche Ascendante avec E/Vo="+str(e)
 
 fig = plt.figure() # initialise la figure principale
@@ -74,6 +89,7 @@ plt.title(plot_title)
 plt.xlabel("x")
 plt.ylabel("Densité de probabilité de présence")
 plt.legend() #Permet de faire apparaitre la legende
+plt.figtext(0.15, 0.85, f"T = {T:.4f}", fontsize=12, bbox={"facecolor":"white", "alpha":0.6})
 
 ani = animation.FuncAnimation(fig,animate,init_func=init, frames=nd, blit=False, interval=50, repeat=True)
 
