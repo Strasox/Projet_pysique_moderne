@@ -17,7 +17,7 @@ def animate(j):
 dt=1E-7
 dx=0.001
 nx=int(1/dx)*2
-nt=90000 # En fonction du potentiel il faut modifier ce parametre car sur certaines animations la particule atteins les bords
+nt=60000 # En fonction du potentiel il faut modifier ce parametre car sur certaines animations la particule atteins les bords
 nd=int(nt/1000)+1#nombre d image dans notre animation
 n_frame = nd
 s=dt/(dx**2)
@@ -25,7 +25,7 @@ xc=0.6
 sigma=0.05
 A=1/(math.sqrt(sigma*math.sqrt(math.pi)))
 v0=-4000
-e=5#Valeur du rapport E/V0
+e=2#Valeur du rapport E/V0
 E=e*v0
 k=math.sqrt(2*abs(E))
 
@@ -67,7 +67,7 @@ plot_title = "Marche Ascendante avec E/Vo="+str(e)
 
 fig = plt.figure() # initialise la figure principale
 line, = plt.plot([], [])
-plt.ylim(-2,13)
+plt.ylim(-2,12)
 plt.xlim(0,2)
 plt.plot(o,V,label="Potentiel")
 plt.title(plot_title)
@@ -75,9 +75,9 @@ plt.xlabel("x")
 plt.ylabel("Densité de probabilité de présence")
 plt.legend() #Permet de faire apparaitre la legende
 
-ani = animation.FuncAnimation(fig,animate,init_func=init, frames=nd, blit=False, interval=100, repeat=True)
+ani = animation.FuncAnimation(fig,animate,init_func=init, frames=nd, blit=False, interval=50, repeat=True)
 
 file_name = 'paquet_onde_e='+str(e)+'.mp4'
-ani.save(file_name, writer = animation.FFMpegWriter(fps=30, bitrate=5000))
+ani.save(file_name, writer = animation.FFMpegWriter(fps=20, bitrate=4000))
 
 plt.show()
