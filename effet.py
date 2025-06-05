@@ -1,64 +1,31 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import math
 
-# Paramètres constants
-dt = 1E-7
-dx = 0.001
-nx = int(1 / dx) * 4
-nt = 100000
-s = dt / dx ** 2
-sigma = 0.05
-A = 1 / (math.sqrt(sigma * math.sqrt(math.pi)))
-xc = 0.8
-v0 = -4000  # profondeur du puits
-a, b = 1.0, 1.5  # limites du puits
+hbar = 1.055e-34  #J.s
+m = 9.11e-31      #kg
+eV = 1.602e-19    #eV en joules
 
-# Grille d'espace
-o = np.linspace(0, (nx - 1) * dx, nx)
-V = np.zeros(nx)
-V[(o >= a) & (o <= b)] = v0
 
-# Liste des rapports E/|V0|
-e_values = np.linspace(0.01, 0.2, 50)
+V0 = 1 * eV #J
+a = 3e-9 #m
+
+E_V0_ratios = np.linspace(0.01, 5, 1000) #valeur de début, fin, nombre de points à prendre dans cet intervalle
 T_values = []
 
-for e in e_values:
-    E = e * abs(v0)
-    k = np.sqrt(2 * E)
-
-    # Paquet initial
-    cpt = A * np.exp(1j * k * o - ((o - xc) ** 2) / (2 * sigma ** 2))
-    re = np.real(cpt)
-    im = np.imag(cpt)
-    densite = np.zeros((nt, nx))
-    densite[0, :] = np.abs(cpt) ** 2
-    b = np.zeros(nx)
-
-    # Simulation temporelle
-    for i in range(1, nt):
-        if i % 2 != 0:
-            b[1:-1] = im[1:-1]
-            im[1:-1] = im[1:-1] + s * (re[2:] + re[:-2] - 2 * re[1:-1]) - 2 * dt * V[1:-1] * re[1:-1]
-            densite[i, 1:-1] = re[1:-1]**2 + im[1:-1]*b[1:-1]
-        else:
-            re[1:-1] = re[1:-1] - s * (im[2:] + im[:-2] - 2 * im[1:-1]) + 2 * dt * V[1:-1] * im[1:-1]
-
-    # Transmission : intégrale de la densité à droite du puits
-    dens_finale = densite[-1, :]
-    zone_transmise = o > (b + 0.05)
-    proba_transmise = np.sum(dens_finale[zone_transmise]) * dx
-    proba_totale = np.sum(dens_finale) * dx
-    T = proba_transmise / proba_totale
+for ratio in E_V0_ratios:
+    E = ratio * V0 #énergie en joules
+    
+    #Forme de T trouvée par l'étude analytique
+    k2 = np.sqrt(2 * m * (E + V0)) / hbar #onde dans le puits
+    T = 1 / (1 + (V0**2 * np.sin(k2 * a)**2) / (4 * E * (E + V0)))
     T_values.append(T)
 
-    print(f"E/|V0| = {e:.2f}, T = {T:.4f}")
-
-# Tracé du coefficient de transmission
-plt.plot(e_values, T_values)
-plt.title("Effet Ramsauer-Townsend : Transmission en fonction de E/|V₀|")
-plt.xlabel("E / |V₀|")
-plt.ylabel("Coefficient de transmission T")
+# Tracé
+plt.figure(figsize=(8,5))
+plt.plot(E_V0_ratios, T_values, label="Puits de potentiel")
+plt.xlabel(r"$E/V_0$")
+plt.ylabel("Coefficient de transmission $T$")
+plt.title("Evolution du coefficient de transmission T en fonction du rapport E/V0")
 plt.grid(True)
-plt.ylim(0, 1.05)
+plt.legend()
 plt.show()
