@@ -5,14 +5,14 @@ import math
 # Paramètres constants
 dt = 1E-7
 dx = 0.001
-nx = int(1 / dx) * 2
-nt = 90000
+nx = int(1 / dx) * 4
+nt = 100000
 s = dt / dx ** 2
 sigma = 0.05
 A = 1 / (math.sqrt(sigma * math.sqrt(math.pi)))
-xc = 0.4
+xc = 0.8
 v0 = -4000  # profondeur du puits
-a, b = 0.8, 1.2  # limites du puits
+a, b = 1.0, 1.5  # limites du puits
 
 # Grille d'espace
 o = np.linspace(0, (nx - 1) * dx, nx)
