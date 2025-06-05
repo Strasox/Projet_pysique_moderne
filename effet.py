@@ -6,7 +6,7 @@ import math
 dt = 1E-7
 dx = 0.001
 nx = int(1 / dx) * 2
-nt = 60000
+nt = 90000
 s = dt / dx ** 2
 sigma = 0.05
 A = 1 / (math.sqrt(sigma * math.sqrt(math.pi)))
@@ -20,7 +20,7 @@ V = np.zeros(nx)
 V[(o >= a) & (o <= b)] = v0
 
 # Liste des rapports E/|V0|
-e_values = np.linspace(0.1, 10, 100)
+e_values = np.linspace(0.01, 0.2, 50)
 T_values = []
 
 for e in e_values:
