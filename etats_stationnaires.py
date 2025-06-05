@@ -19,7 +19,7 @@ H = np.diag(diag) + np.diag(off_diag, k=1) + np.diag(off_diag, k=-1)
 H += np.diag(V)
 
 num_etats = 10  # Nombre d’états stationnaires à extraire
-energies, etats = eigh(H, eigvals=(0, num_etats-1))
+energies, etats = eigh(H, subset_by_index=(0, num_etats-1))
 
 # Normalisation des états propres
 etats_normalises = etats / np.sqrt(np.sum(np.abs(etats)**2, axis=0) * dx)
