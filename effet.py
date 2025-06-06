@@ -14,7 +14,7 @@ T_values = []
 
 for ratio in E_V0_ratios:
     E = ratio * V0 #énergie en joules
-    
+
     #Forme de T trouvée par l'étude analytique
     k2 = np.sqrt(2 * m * (E + V0)) / hbar #onde dans le puits
     T = 1 / (1 + (V0**2 * np.sin(k2 * a)**2) / (4 * E * (E + V0)))
@@ -25,7 +25,7 @@ plt.figure(figsize=(8,5))
 plt.plot(E_V0_ratios, T_values, label="Puits de potentiel")
 plt.xlabel(r"$E/V_0$")
 plt.ylabel("Coefficient de transmission $T$")
-plt.title("Evolution du coefficient de transmission T en fonction du rapport E/V0")
+plt.title("Evolution du coefficient de transmission T en fonction du rapport E/V0 avec a ="+str(a))
 plt.grid(True)
 plt.legend()
 plt.show()
