@@ -18,7 +18,7 @@ off_diag = np.ones(nx - 1) * (-1 / dx**2)
 H = np.diag(diag) + np.diag(off_diag, k=1) + np.diag(off_diag, k=-1)
 H += np.diag(V)
 
-num_etats = 5  # Nombre d’états stationnaires à extraire
+num_etats = 10  # Nombre d’états stationnaires à extraire
 energies, etats = eigh(H, subset_by_index=(0, num_etats-1))
 
 # Normalisation des états propres
