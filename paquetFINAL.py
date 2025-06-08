@@ -16,7 +16,7 @@ L_total = 40 * L_affiche
 x = np.linspace(-L_total, L_total, Nx)
 dx = x[1] - x[0]
 
-# Potentiel : puits carré attractif + couche absorbante (PML)
+# Potentiel : puits carré + couche absorbante (PML)
 L = 5
 V0 = -1.0
 V = np.zeros(Nx, dtype=complex)
@@ -130,5 +130,51 @@ ax1.legend(lines, labels, loc='upper right')
 
 plt.show()
 
-# --- Transmission vs énergie (scan E_list) ---
-# (Votre fonction reste identique à l'original)
+# --- Transmission vs énergie ---
+def transmission_vs_energy(E_list, x, V, x0, sigma, hbar, m, dx, dt, Nt):
+    T_list = []
+    Nx = len(x)
+    for E in E_list:
+        p0 = np.sqrt(2 * m * E)
+        psi0_ = (1/np.sqrt(np.sqrt(np.pi)*sigma)) * np.exp(-(x - x0)**2/(2*sigma**2)) * np.exp(1j * p0 * x / hbar)
+        psi0_ /= np.sqrt(np.sum(np.abs(psi0_)**2) * dx)
+        psi_ = psi0_.copy()
+        # Matrices Crank-Nicolson
+        alpha = 1j * hbar * dt / (2 * m * dx**2)
+        beta = 1j * dt / (2 * hbar)
+        main_diag = 1 + 2 * alpha + beta * V
+        off_diag = -alpha * np.ones(Nx - 1)
+        A = diags([main_diag, off_diag, off_diag], [0, -1, 1], format='csc')
+        main_diag_B = 1 - 2 * alpha - beta * V
+        B = diags([main_diag_B, alpha * np.ones(Nx - 1), alpha * np.ones(Nx - 1)], [0, -1, 1], format='csc')
+        lu_A = splu(A)
+        def crank_nicolson_step(psi):
+            rhs = B.dot(psi)
+            psi_next = lu_A.solve(rhs)
+            return psi_next
+        # Propagation
+        for _ in range(400):  # Nombre d'étapes de propagation
+            psi_ = crank_nicolson_step(psi_)
+        # Transmission: à droite du puits, hors PML
+        mask_trans = (x > (L/2 + 5)) & (x < (x[-abs_width] - 5))
+        T = np.sum(np.abs(psi_[mask_trans])**2) * dx
+        T_list.append(T)
+    return np.array(T_list)
+
+# Paramètres balayage énergétique
+Emin = 0.01 * abs(V0)
+Emax = 10 * abs(V0)
+n_points = 200
+E_list = np.linspace(Emin, Emax, n_points)
+T_list = transmission_vs_energy(E_list, x, V, x0, sigma, hbar, m, dx, dt, Nt)
+
+# Tracé du graphe de transmission
+plt.figure(figsize=(8, 5))
+plt.plot(E_list / abs(V0), T_list, 'b-', label='Transmission')
+plt.xlabel("Energie / |V0|")
+plt.ylabel("Coefficient de transmission T(E)")
+plt.title("Transmission en fonction de E/|V0| (effet Ramsauer–Townsend)")
+plt.grid()
+plt.legend()
+plt.tight_layout()
+plt.show()
