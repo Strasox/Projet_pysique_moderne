@@ -12,11 +12,11 @@ V = np.zeros(nx)
 V[(x >= 0.8) & (x <= 0.9)] = V0
 
 # Construction du Hamiltonien (discrétisation du Laplacien)
-main_diag = -2 * np.ones(nx)
-off_diag = np.ones(nx - 1)
-laplacien = (np.diag(main_diag) + np.diag(off_diag, 1) + np.diag(off_diag, -1)) / dx**2
+diag = np.ones(nx) * (2 / dx**2)
+off_diag = np.ones(nx - 1) * (-1 / dx**2)
 
-H = -0.5 * laplacien + np.diag(V)
+H = 0.5 * (np.diag(diag) + np.diag(off_diag, 1) + np.diag(off_diag, -1))
+H += np.diag(V)
 
 num_etats = 10  # Nombre d’états stationnaires à extraire
 energies, etats = eigh(H)
